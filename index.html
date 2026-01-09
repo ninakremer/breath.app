@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>breath app - for anxious souls</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Times New Roman', serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .star {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 24px;
+      color: #000;
+      opacity: 0.4;
+    }
+
+    .star-left {
+      left: 40px;
+    }
+
+    .star-right {
+      right: 40px;
+    }
+
+    .container {
+      position: relative;
+      width: 400px;
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .circles-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      transition: gap 3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .circles-container.breathing {
+      gap: 60px;
+    }
+
+    .circle {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: transparent;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .circle::before {
+      display: none;
+    }
+
+    .circle-main {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .circle-top {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+    }
+
+    .circle-bottom {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+    }
+
+    .breathing .circle-top {
+      opacity: 1;
+      transform: translate(-50%, calc(-50% - 80px));
+    }
+
+    .breathing .circle-bottom {
+      opacity: 1;
+      transform: translate(-50%, calc(-50% + 80px));
+    }
+
+    .breathing .circle-main {
+      opacity: 0;
+    }
+
+    .text {
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      color: #000;
+      text-align: center;
+      line-height: 1.6;
+      opacity: 0.7;
+      transition: opacity 0.5s ease;
+    }
+
+    .instruction {
+      position: absolute;
+      font-size: 18px;
+      letter-spacing: 1px;
+      color: #000;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .instruction.active {
+      opacity: 0.6;
+    }
+
+    .corner {
+      position: fixed;
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: #000;
+      opacity: 0.5;
+      font-family: 'Times New Roman', serif;
+    }
+
+    .top-left {
+      top: 30px;
+      left: 30px;
+    }
+
+    .top-right {
+      top: 30px;
+      right: 30px;
+    }
+
+    .bottom-left {
+      bottom: 30px;
+      left: 30px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bottom-right {
+      bottom: 30px;
+      right: 30px;
+    }
+
+    .begin-btn {
+      background: none;
+      border: none;
+      font-family: 'Times New Roman', serif;
+      font-size: 12px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      opacity: 0.5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0;
+    }
+
+    .begin-btn:hover {
+      opacity: 1;
+    }
+
+    .begin-btn.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        width: 90vw;
+      }
+      
+      .circles-container {
+        width: 250px;
+        height: 250px;
+      }
+      
+      .circle {
+        width: 250px;
+        height: 250px;
+      }
+      
+      .star-left {
+        left: 20px;
+      }
+      
+      .star-right {
+        right: 20px;
+      }
+
+      .corner {
+        font-size: 10px;
+      }
+
+      .top-left, .top-right {
+        top: 20px;
+      }
+
+      .bottom-left, .bottom-right {
+        bottom: 20px;
+      }
+
+      .top-left, .bottom-left {
+        left: 20px;
+      }
+
+      .top-right, .bottom-right {
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="corner top-left">by nina kremer</div>
+  <div class="corner top-right">hello@ninarkremer.com</div>
+  <div class="corner bottom-left" id="timer">00:00</div>
+  <div class="corner bottom-right">
+    <button class="begin-btn" id="beginBtn">begin ➝</button>
+  </div>
+
+  <div class="star star-left">✶</div>
+  <div class="star star-right">✶</div>
+
+  <div class="container">
+    <div class="circles-container" id="circlesContainer">
+      <div class="circle circle-top">
+        <div class="text"></div>
+      </div>
+      <div class="circle circle-main">
+        <div class="text" id="mainText">don't panic<br>take a moment to breath</div>
+      </div>
+      <div class="circle circle-bottom">
+        <div class="text"></div>
+      </div>
+      <div class="instruction" id="instruction"></div>
+    </div>
+  </div>
+
+  <script>
+    const beginBtn = document.getElementById('beginBtn');
+    const circlesContainer = document.getElementById('circlesContainer');
+    const mainText = document.getElementById('mainText');
+    const instruction = document.getElementById('instruction');
+    const timer = document.getElementById('timer');
+    let startTime = null;
+    let timerInterval = null;
+
+    // Audio context for ambient sounds
+    let audioContext;
+    let oscillators = [];
+    let gainNodes = [];
+
+    function createAmbientSound() {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Создаем несколько тихих тонов (healing frequencies)
+      const frequencies = [174, 285, 396, 417];
+      
+      frequencies.forEach((freq, i) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.value = 0.015; // Очень тихо
+        
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        osc.start();
+        oscillators.push(osc);
+        gainNodes.push(gain);
+      });
+    }
+
+    function stopAmbientSound() {
+      if (oscillators.length > 0) {
+        oscillators.forEach(osc => osc.stop());
+        oscillators = [];
+        gainNodes = [];
+      }
+    }
+
+    function updateTimer() {
+      const elapsed = Date.now() - startTime;
+      const minutes = Math.floor(elapsed / 60000);
+      const seconds = Math.floor((elapsed % 60000) / 1000);
+      timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    async function breathCycle() {
+      // Start timer
+      startTime = Date.now();
+      timerInterval = setInterval(updateTimer, 100);
+      
+      // Start ambient sound
+      createAmbientSound();
+
+      // Hide button
+      beginBtn.classList.add('hidden');
+      
+      // Hide initial text
+      mainText.style.opacity = '0';
+      
+      await sleep(500);
+
+      // Infinite breathing loop
+      while (true) {
+        // Breath in (4 seconds)
+        circlesContainer.classList.add('breathing');
+        instruction.textContent = 'breath in';
+        instruction.classList.add('active');
+        await sleep(4000);
+        
+        // Hold (7 seconds)
+        instruction.textContent = 'hold';
+        await sleep(7000);
+        
+        // Breath out (8 seconds)
+        circlesContainer.classList.remove('breathing');
+        instruction.textContent = 'breath out';
+        await sleep(8000);
+        
+        // Small pause before next cycle
+        instruction.style.opacity = '0';
+        await sleep(1000);
+        instruction.style.opacity = '0.6';
+      }
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    beginBtn.addEventListener('click', breathCycle);
+  </script>
+</body>
+</html>
