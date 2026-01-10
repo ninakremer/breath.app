@@ -166,19 +166,23 @@
     }
 
     .bottom-right {
+      position: fixed;
       bottom: 30px;
       right: 30px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      font-family: 'Times New Roman', serif;
     }
 
     .begin-btn {
       background: none;
       border: none;
+      color: #000;
       font-family: 'Times New Roman', serif;
       font-size: 12px;
       letter-spacing: 1px;
       cursor: pointer;
       transition: all 0.3s ease;
-      opacity: 0.5;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -186,7 +190,7 @@
     }
 
     .begin-btn:hover {
-      opacity: 1;
+      color: #666;
     }
 
     .begin-btn.hidden {
@@ -243,7 +247,7 @@
   <div class="corner top-left">by nina kremer</div>
   <div class="corner top-right">hello@ninarkremer.com</div>
   <div class="corner bottom-left" id="timer">00:00</div>
-  <div class="corner bottom-right">
+  <div class="bottom-right">
     <button class="begin-btn" id="beginBtn">begin ➝</button>
   </div>
 
